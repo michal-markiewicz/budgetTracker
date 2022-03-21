@@ -13,14 +13,14 @@
 <body>
     
     <!--
-        1. Be able to record expenses and income
-        2. Be able to set the date for an entry
-        3. Be able to tag the entries to categorize them
-        4. Be able to see a monthly overview of expenses and income
-        5. Be able to see net worth
-        6. Be able to visualize the expenses and incomes through graphs
-        7. Be able to select date ranges, eg.: previous month, or year to date
-        8. Use localStorage to save all the data
+        1. Be able to record expenses and income DONE
+        2. Be able to set the date for an entry DONE 
+        3. Be able to tag the entries to categorize them DONE
+        4. Be able to see a monthly overview of expenses and income DONE
+        5. Be able to see net worth DONE
+        6. Be able to visualize the expenses and incomes through graphs INCOMING
+        7. Be able to select date ranges, eg.: previous month, or year to date DONE
+        8. Use localStorage to save all the data DONE
     -->
 
     <div class="wrapper">
@@ -28,8 +28,8 @@
         <div class="input-container" id="income-input-container"> 
             <h4>Add income</h4>
             <input type="text" placeholder="Name" id="income-name">
-            <input type="text" placeholder="Amount" id="income-amount"> 
-            <input type="date" value="2022-03-15" min="2010-01-01" max="2022-03-15" id="income-date">
+            <input type="text" placeholder="Amount in dollars" id="income-amount"> 
+            <input type="date" min="2010-01-01" max="2022-03-15" id="income-date">
             <select id="income-category">
                 <option value="Not categorized">Not categorized</option>
                 <option value="Job">Job</option>
@@ -43,8 +43,8 @@
         <div class="input-container" id="expense-input-container">
             <h4>Add expense</h4>
             <input type="text" placeholder="Name" id="expense-name">
-            <input type="text" placeholder="Amount" id="expense-amount">
-            <input type="date" value="2022-03-15" min="2010-01-01" max="2022-03-15" id="expense-date">
+            <input type="text" placeholder="Amount in dollars" id="expense-amount">
+            <input type="date" min="2010-01-01" max="2022-03-15" id="expense-date">
             <select id="expense-category">
                 <option value="Not categorized">Not categorized</option>
                 <option value="Clothing">Clothing</option>
@@ -56,6 +56,13 @@
 
             <button class="submit-button">Submit</button>
         </div>
+
+        <h4>Showing data from</h4>
+        <input type="date" min="2010-01-01" max="2022-03-15" id="table-date">
+
+        <h4 id="total-income"></h4>
+        <h4 id="total-expense"></h4>
+        <h4 id="total-balance"></h4>
 
         <div class="table-container">
             <table>
