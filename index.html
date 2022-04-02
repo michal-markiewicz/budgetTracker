@@ -11,17 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    
-    <!--
-        1. Be able to record expenses and income DONE
-        2. Be able to set the date for an entry DONE 
-        3. Be able to tag the entries to categorize them DONE
-        4. Be able to see a monthly overview of expenses and income DONE
-        5. Be able to see net worth DONE
-        6. Be able to visualize the expenses and incomes through graphs INCOMING
-        7. Be able to select date ranges, eg.: previous month, or year to date DONE
-        8. Use localStorage to save all the data DONE
-    -->
 
     <div class="wrapper">
 
@@ -98,7 +87,14 @@
             </table>
         </div>
 
+        <h4>All-time Income visualized</h4>
+        <canvas id="income-chart" width="400" height="400"></canvas>
+
+        <h4>All-time Expenses visualized</h4>
+        <canvas id="expense-chart" width="400" height="400"></canvas>
+
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

@@ -1,16 +1,5 @@
 'use strict';
 
-/*
-    1. Be able to record expenses and income
-    2. Be able to set the date for an entry
-    3. Be able to tag the entries to categorize them
-    4. Be able to see a monthly overview of expenses and income
-    5. Be able to see net worth
-    6. Be able to visualize the expenses and incomes through graphs
-    7. Be able to select date ranges, eg.: previous month, or year to date
-    8. Use localStorage to save all the data
-*/
-
 const tableBodyElement = document.querySelector('.financial-table-body');
 
 const incomeInputContainer = document.querySelector("#income-input-container");
@@ -37,6 +26,7 @@ incomeInputContainer.querySelector(".submit-button").addEventListener('click', (
     saveIncomeToLocalStorage(incomeObj);
 
     reloadHtmlTable();
+    updateChart(incomeChart);
 })
 
 expenseInputContainer.querySelector(".submit-button").addEventListener('click', () => {
@@ -54,6 +44,7 @@ expenseInputContainer.querySelector(".submit-button").addEventListener('click', 
     saveExpenseToLocalStorage(expenseObj);
 
     reloadHtmlTable();
+    updateChart(expenseChart);
 })
 
 function validateInput (inputElement) 
@@ -286,3 +277,126 @@ function getIncomeReports ()
 
     return incomeReports;
 }
+
+
+const expenseCanvas = document.querySelector('#expense-chart');
+const expenseChart = new Chart(expenseCanvas, {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [],
+            backgroundColor: ["#a3a3a2", "#a61616", "#4aa616", "#a6a616", "#8416a6", "#3516a6"],
+        }],
+        labels: ["Not categorized", "Clothing", "Medical", "Hobbies", "Travel", "Bills"]
+    }
+});
+
+const incomeCanvas = document.querySelector('#income-chart');
+const incomeChart = new Chart(incomeCanvas, {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [],
+            backgroundColor: ["#a3a3a2", "#509c21", "#9c2194", "#21569c"],
+        }],
+        labels: ["Not categorized", "Job", "Business", "Investments"]
+    }
+});
+
+updateChart(incomeChart);
+updateChart(expenseChart);
+
+function updateChart (chart)
+{
+
+    if (chart === incomeChart)
+    {
+        let incomeReports = getIncomeReports();
+
+        if (incomeReports === null )
+        {
+            return false;
+        }
+
+        let notCategorizedIncome = 0;
+        let jobIncome = 0;
+        let businessIncome = 0;
+        let investmentsIncome = 0;
+
+        incomeReports.forEach((incomeReport) => {
+
+            switch (incomeReport.category)
+            {
+                case "Not categorized":
+                    notCategorizedIncome += incomeReport.amount;
+                    break; 
+                case "Job":
+                    jobIncome += incomeReport.amount;
+                    break;
+                case "Business":
+                    businessIncome += incomeReport.amount;
+                    break;
+                case "Investments":
+                    investmentsIncome += incomeReport.amount;
+                    break;
+            }
+
+        })
+
+        chart.data.datasets[0].data = [notCategorizedIncome, jobIncome, businessIncome, investmentsIncome];
+        chart.update();
+    }
+    else if (chart === expenseChart)
+    {
+        let expenseReports = getExpenseReports();
+
+        if (expenseReports === null )
+        {
+            return false;
+        }
+
+        let notCategorizedExpense = 0;
+        let clothingExpense = 0;
+        let medicalExpense = 0;
+        let hobbiesExpense = 0;
+        let travelExpense = 0;
+        let billsExpense = 0;
+
+        expenseReports.forEach((expenseReport) => {
+
+            switch (expenseReport.category)
+            {
+                case "Not categorized":
+                    notCategorizedExpense += expenseReport.amount;
+                    break; 
+                case "Clothing":
+                    clothingExpense += expenseReport.amount; 
+                    break; 
+                case "Medical":
+                    medicalExpense += expenseReport.amount;
+                    break;
+                case "Hobbies":
+                    hobbiesExpense += expenseReport.amount; 
+                    break; 
+                case "Travel":
+                    travelExpense += expenseReport.amount;
+                    break; 
+                case "Bills":
+                    billsExpense += expenseReport.amount; 
+                    break;
+            }
+
+        })
+
+        console.log(notCategorizedExpense, medicalExpense, clothingExpense)
+
+        chart.data.datasets[0].data = [notCategorizedExpense, clothingExpense, medicalExpense, hobbiesExpense, travelExpense, billsExpense];
+        chart.update();
+    }
+    else 
+    {
+        console.log('wrong report object');
+    }
+}
+
+
