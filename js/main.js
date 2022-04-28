@@ -11,6 +11,28 @@ const totalBalanceHeader = document.querySelector('#total-balance');
 
 reloadHtmlTable();
 
+class Income
+{
+    constructor (name, amount, date, category)
+    {
+        this.name = name,
+        this.amount = Number(amount),
+        this.date = date,
+        this.category = category
+    }
+}
+
+class Expense
+{
+    constructor (name, amount, date, category) 
+    {
+        this.name = name,
+        this.amount = Number(-amount),
+        this.date = date,
+        this.category = category
+    }
+}
+
 incomeInputContainer.querySelector(".submit-button").addEventListener('click', () => {
 
     const incomeName = incomeInputContainer.querySelector('#income-name');
@@ -22,8 +44,8 @@ incomeInputContainer.querySelector(".submit-button").addEventListener('click', (
     if (validateInput(incomeAmount) === false) return;
     if (validateInput(incomeDate) === false) return;
 
-    const incomeObj = createIncomeReport(incomeName.value, incomeAmount.value, incomeDate.value, incomeCategory.value);
-    saveIncomeToLocalStorage(incomeObj);
+    const income = new Income(incomeName.value, incomeAmount.value, incomeDate.value, incomeCategory.value);
+    saveIncomeToLocalStorage(income);
 
     reloadHtmlTable();
     updateChart(incomeChart);
@@ -40,8 +62,8 @@ expenseInputContainer.querySelector(".submit-button").addEventListener('click', 
     if (validateInput(expenseAmount) === false) return;
     if (validateInput(expenseDate) === false) return;
 
-    const expenseObj = createExpenseReport(expenseName.value, expenseAmount.value, expenseDate.value, expenseCategory.value);
-    saveExpenseToLocalStorage(expenseObj);
+    const expense = new Expense(expenseName.value, expenseAmount.value, expenseDate.value, expenseCategory.value);
+    saveExpenseToLocalStorage(expense);
 
     reloadHtmlTable();
     updateChart(expenseChart);
@@ -56,46 +78,12 @@ function validateInput (inputElement)
     }
 }
 
-function createIncomeReport (name, amount, date, category)
-{
-    function IncomeReport () 
-    {
-        this.id = Math.round(Math.random() * 1000000);
-        this.name = name,
-        this.amount = Number(amount),
-        this.date = date,
-        this.category = category
-    }
-
-    const incomeObj = new IncomeReport();
-    return incomeObj;
-}
-
-function createExpenseReport (name, amount, date, category)
-{
-    function ExpenseReport () 
-    {
-        this.id = Math.round(Math.random() * 1000000);
-        this.name = name,
-        this.amount = Number(-amount),
-        this.date = date,
-        this.category = category
-    }
-
-    const expenseObj = new ExpenseReport();
-    return expenseObj;
-}
-
-function saveIncomeToLocalStorage(incomeObj)
+function saveIncomeToLocalStorage(income)
 {   
-    
-    // JSON.stringify() to send to localStorage in JSON string format
-    // JSON.parse() to retrieve from localStorage in original format
-
     if (localStorage.getItem('Income Reports') === null)
     {
         const incomeReports = [];
-        incomeReports.push(incomeObj);
+        incomeReports.push(income);
         
         const jsonArray = JSON.stringify(incomeReports);
         localStorage.setItem('Income Reports', jsonArray);
@@ -104,24 +92,19 @@ function saveIncomeToLocalStorage(incomeObj)
     {
         const incomeReports = getIncomeReports();
 
-        incomeReports.push(incomeObj);
+        incomeReports.push(income);
 
         const jsonArrayUpdated = JSON.stringify(incomeReports);
         localStorage.setItem('Income Reports', jsonArrayUpdated);
     }
-    
 }
 
-function saveExpenseToLocalStorage(expenseObj)
+function saveExpenseToLocalStorage(expense)
 {   
-    
-    // JSON.stringify() to send to localStorage in JSON string format
-    // JSON.parse() to retrieve from localStorage in original format
-
     if (localStorage.getItem('Expense Reports') === null)
     {
         const expenseReports = [];
-        expenseReports.push(expenseObj);
+        expenseReports.push(expense);
         
         const jsonArray = JSON.stringify(expenseReports);
         localStorage.setItem('Expense Reports', jsonArray);
@@ -129,12 +112,11 @@ function saveExpenseToLocalStorage(expenseObj)
     else 
     {
         const expenseReports = getExpenseReports();
-        expenseReports.push(expenseObj);
+        expenseReports.push(expense);
 
         const jsonArrayUpdated = JSON.stringify(expenseReports);
         localStorage.setItem('Expense Reports', jsonArrayUpdated);
     }
-    
 }
 
 function reloadHtmlTable ()
@@ -146,44 +128,26 @@ function reloadHtmlTable ()
 
     if (localStorage.getItem('Expense Reports'))
     {
-
-        (function () {
-
-            const expenseReports = getExpenseReports();
+        const expenseReports = getExpenseReports();
         
-            expenseReports.forEach((expenseReport) => {
+        expenseReports.forEach((expenseReport) => {
+            totalExpense += expenseReport.amount;
+            addTableData(expenseReport);
+        })
 
-                totalExpense += expenseReport.amount;
-               
-                addTableData(expenseReport);
-
-            })
-
-            totalExpenseHeader.textContent = "Expense: " + totalExpense;
-    
-        })();
-
+        totalExpenseHeader.textContent = "Expense: " + totalExpense;
     }
 
     if (localStorage.getItem('Income Reports'))
     {
-
-        (function () {
-
-            const incomeReports = getIncomeReports();
+        const incomeReports = getIncomeReports();
         
-            incomeReports.forEach((incomeReport) => {
-                
-                totalIncome += incomeReport.amount;
+        incomeReports.forEach((incomeReport) => {
+            totalIncome += incomeReport.amount;
+            addTableData(incomeReport);
+        })
 
-                addTableData(incomeReport);
-
-            })
-
-            totalIncomeHeader.textContent = "Income: " + totalIncome;
-    
-        })();
-
+        totalIncomeHeader.textContent = "Income: " + totalIncome;
     }
 
     totalBalance = totalIncome + totalExpense;
